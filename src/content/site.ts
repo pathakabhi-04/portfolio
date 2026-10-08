@@ -342,7 +342,6 @@ export const education: Education[] = [
 
 export const achievements: string[] = [
   "Smart India Hackathon (SIH) 2026: my team ranked 7th in the Bennett University internal round with iTantra, an offline speech relay for ISRO problem statement SIH26173.",
-  "Unstop hackathon, Aug–Sep 2026: built TemporalRAG from idea submission to full product.",
 ];
 
 /** Convenience selectors so components stay dumb. */
