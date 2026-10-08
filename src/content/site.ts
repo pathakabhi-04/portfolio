@@ -36,7 +36,7 @@ export const profile: Profile = {
   role: "AI/ML Engineer",
   tagline:
     "I build computer vision and retrieval systems, and I test them hard enough to know where they break.",
-  location: "", // TODO: city, country
+  location: "Greater Noida, India",
   email: "pathakabhinav0405@gmail.com",
   avatar: "/images/avatar.jpg",
   resumeUrl: "", // set to "/resume.pdf" once the file is in public/
@@ -319,7 +319,7 @@ export const education: Education[] = [
     degree: "B.Tech, Computer Science Engineering",
     start: "2024",
     end: "2028",
-    note: "",
+    note: "CGPA 8.43 (current)",
   },
 ];
 
