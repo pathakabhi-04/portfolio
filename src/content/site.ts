@@ -16,7 +16,7 @@ import type {
 } from "./types";
 
 export const meta: SiteMeta = {
-  baseUrl: "https://example.com", // TODO: your real domain, no trailing slash
+  baseUrl: "https://abhinavpathak.vercel.app",
   title: "Abhinav Pathak",
   description:
     "AI/ML engineer building computer vision and retrieval-augmented systems, with evaluation you can trust.",
