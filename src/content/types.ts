@@ -40,10 +40,15 @@ export type Experience = {
 };
 
 export type Education = {
+  /** Institution or board, e.g. "Bennett University" or "CBSE". */
   school: string;
+  /** Qualification, e.g. "B.Tech, Computer Science Engineering" or "Class XII". */
   degree: string;
-  start: string;
+  /** Leave empty for single-year entries like school boards. */
+  start?: string;
   end: string;
+  /** CGPA or percentage, shown in its own column. */
+  score?: string;
   note?: string;
 };
 

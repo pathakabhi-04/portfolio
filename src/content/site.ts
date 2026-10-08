@@ -59,7 +59,7 @@ export const socials: Social[] = [
 export const skills: SkillGroup[] = [
   {
     group: "Languages",
-    items: ["Python", "C++", "SQL", "Bash"],
+    items: ["Python", "C++", "Bash"],
   },
   {
     group: "Computer Vision",
@@ -324,7 +324,19 @@ export const education: Education[] = [
     degree: "B.Tech, Computer Science Engineering",
     start: "2024",
     end: "2028",
-    note: "CGPA 8.43 (current)",
+    score: "CGPA 8.43 (current)",
+  },
+  {
+    school: "CBSE",
+    degree: "Class XII",
+    end: "2023",
+    score: "80%",
+  },
+  {
+    school: "CBSE",
+    degree: "Class X",
+    end: "2021",
+    score: "96.4%",
   },
 ];
 

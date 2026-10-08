@@ -121,22 +121,32 @@ export default function AboutPage() {
           <Reveal>
             <SectionTitle>Education</SectionTitle>
           </Reveal>
-          <ul className="mt-8 space-y-6">
-            {education.map((ed) => (
-              <Reveal key={ed.degree}>
-                <li className="flex flex-wrap items-baseline justify-between gap-2">
-                  <div>
-                    <h3 className="font-display text-lg font-semibold">{ed.school}</h3>
-                    <p className="text-fg-muted">{ed.degree}</p>
-                    {ed.note && <p className="mt-1 text-sm text-fg-subtle">{ed.note}</p>}
-                  </div>
-                  <p className="font-mono text-xs text-fg-subtle">
-                    {ed.start} – {ed.end}
-                  </p>
-                </li>
-              </Reveal>
-            ))}
-          </ul>
+          <Reveal>
+            <div className="mt-8 overflow-x-auto">
+              <table className="w-full min-w-[32rem] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-border font-mono text-xs uppercase tracking-wider text-fg-subtle">
+                    <th className="py-2 pr-4 font-normal">Qualification</th>
+                    <th className="py-2 pr-4 font-normal">Institution / Board</th>
+                    <th className="py-2 pr-4 font-normal">Year</th>
+                    <th className="py-2 text-right font-normal">Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {education.map((ed) => (
+                    <tr key={`${ed.degree}-${ed.end}`} className="border-b border-border/60">
+                      <td className="py-3 pr-4 font-medium text-fg">{ed.degree}</td>
+                      <td className="py-3 pr-4 text-fg-muted">{ed.school}</td>
+                      <td className="py-3 pr-4 font-mono text-xs text-fg-subtle">
+                        {ed.start ? `${ed.start} – ${ed.end}` : ed.end}
+                      </td>
+                      <td className="py-3 text-right text-fg">{ed.score}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Reveal>
         </section>
       )}
 
@@ -145,7 +155,7 @@ export default function AboutPage() {
           <Reveal>
             <SectionTitle>Achievements</SectionTitle>
           </Reveal>
-          <ul className="mt-8 list-disc space-y-2 pl-5 text-fg-muted marker:text-accent">
+          <ul className="mt-8 list-disc space-y-2 pl-5 font-semibold text-fg marker:text-accent">
             {achievements.map((a) => (
               <Reveal key={a}>
                 <li>{a}</li>
