@@ -19,7 +19,7 @@ export const meta: SiteMeta = {
   baseUrl: "https://abhinavpathak.vercel.app",
   title: "Abhinav Pathak",
   description:
-    "AI/ML engineer building computer vision and retrieval-augmented systems, with evaluation you can trust.",
+    "Full-stack AI engineer building computer vision and retrieval-augmented systems, with evaluation you can trust.",
   locale: "en",
 };
 
@@ -33,7 +33,7 @@ export const routes: Routes = {
 
 export const profile: Profile = {
   name: "Abhinav Pathak",
-  role: "AI/ML Engineer",
+  role: "Full-Stack AI Engineer",
   tagline:
     "I build computer vision and retrieval systems, and I test them hard enough to know where they break.",
   location: "Greater Noida, India",
