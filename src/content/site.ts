@@ -136,6 +136,11 @@ export const skills: SkillGroup[] = [
     ],
   },
   {
+    group: "Frontend",
+    // Learning. Drop the first item once there's a full-stack project to point to.
+    items: ["Currently learning", "TypeScript", "React", "Next.js"],
+  },
+  {
     group: "Tools & Platforms",
     items: [
       "Git & GitHub",
