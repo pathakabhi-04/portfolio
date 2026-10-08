@@ -1,26 +1,93 @@
 @import "tailwindcss";
 
+/* ── Design tokens ───────────────────────────────────────────────
+   One accent, deep neutrals, editorial type scale.
+   Change the accent here and the whole site follows.             */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Neutrals: near-black, never pure black */
+  --bg: oklch(0.15 0.012 265);
+  --bg-elevated: oklch(0.19 0.014 265);
+  --bg-subtle: oklch(0.23 0.015 265);
+  --fg: oklch(0.96 0.004 265);
+  --fg-muted: oklch(0.72 0.012 265);
+  --fg-subtle: oklch(0.55 0.014 265);
+  --border: oklch(0.30 0.015 265);
+
+  /* The single accent. Used sparingly: links, focus, one hero element. */
+  --accent: oklch(0.72 0.17 172);
+  --accent-strong: oklch(0.80 0.16 172);
+  --accent-muted: oklch(0.72 0.17 172 / 0.14);
+  --accent-fg: oklch(0.16 0.02 172);
+
+  /* Motion: short, decelerating, never bouncy */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur: 260ms;
+  --dur-slow: 380ms;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-muted: var(--accent-muted);
+  --color-accent-fg: var(--accent-fg);
+
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-code), ui-monospace, monospace;
+
+  --ease-out-soft: var(--ease-out);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--border);
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    /* Depth from light, not from borders */
+    background-image:
+      radial-gradient(60rem 40rem at 78% -8%, var(--accent-muted), transparent 65%),
+      radial-gradient(48rem 32rem at 0% 8%, oklch(0.30 0.03 265 / 0.5), transparent 70%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Respect the reader who asked for less movement */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }

@@ -1,0 +1,26 @@
+## The project
+
+Stocklite is a chat assistant for stock analysis. You ask about a stock, and it pulls price history from yfinance and computes indicators (RSI, MACD, the 50-day and 200-day moving averages, ADX). A rule-based engine turns those into a buy, hold or sell signal with a confidence score. A Llama 3.2 1B model with a LoRA adapter then explains the result in plain language. The app has a React frontend, a Node.js backend and a FastAPI service for the AI.
+
+It is a team project. My contribution was the conversational layer of the AI service, along with the backend and frontend changes needed to support it.
+
+## The problem
+
+The first version handled each question on its own. If you asked "how is TCS doing?" and then "should I buy it?", the second question failed, because "it" isn't a stock symbol. Every question had to name the stock again.
+
+## What I built
+
+- **Session memory.** For each user, the service remembers the last stock discussed, the last intent and the conversation so far. The user ID comes from the login token, so each user gets their own memory.
+- **Follow-up resolution.** Phrases like "this stock" or "it" are replaced with the last stock discussed before the query goes any further.
+- **Symbol resolution in a fixed order.** An explicit symbol wins. Next comes a stock from the resolved follow-up, then the stock in memory, then a table of common names (for example, "infy" maps to INFY.NS). An NLP extractor is the last resort. If all of these fail, the service asks the user to name a stock and does not guess.
+- **Intent routing.** Questions are sorted into three kinds: plain analysis, news ("what's the latest on…"), or reasons ("why…"). Only news and reason questions fetch recent headlines from NewsAPI, so plain questions don't spend time on an extra request.
+- **Retrieval over past turns.** The service finds earlier exchanges that share words with the new question and adds a short summary of them to the prompt.
+
+## Keeping a small model honest
+
+A 1B-parameter model often repeats its prompt, makes up indicators, or contradicts the signal it was given. I added a set of checks that run after generation:
+
+- Remove leaked instructions, code, tables and repeated lines.
+- Drop any line that mentions an indicator the model was never given.
+- Rebuild the answer into fixed sections: trend, risk and decision. If the model leaves a section empty, it is filled from the rule engine's own output.
+- If the answer is unusable, generate once more, then fall back to a summary built only from the rule engine's output.

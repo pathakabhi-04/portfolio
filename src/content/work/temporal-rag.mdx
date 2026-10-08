@@ -1,0 +1,23 @@
+## The problem
+
+Surveillance video is unsearchable. Investigators scrub through hours of footage by hand, and nothing connects computer vision detection to natural-language questions.
+
+## What I built
+
+A full pipeline from video ingestion to cited answers.
+
+**Vision side.** Frame extraction with FFmpeg and OpenCV, a fine-tuned YOLOv8m detector, ByteTrack tracking, and a rule-based Event Candidate Engine covering six event types, including near-miss, collision, sudden stop, restricted-zone entry and pedestrian interaction. Keyframes are selected and captioned with LLaVA-7B in 4-bit.
+
+**Retrieval side.** Hybrid retrieval with BM25 and ChromaDB fused by Reciprocal Rank Fusion, a temporal reranker, and grounded answer generation through Groq with timestamp and frame citations.
+
+## The hard part
+
+**Candidate and confirmed incidents.** The rule engine proposes candidates with confidence scores, and LLaVA confirms or downgrades them. This keeps false positives from reaching the retrieval layer.
+
+**Indian roads.** I fine-tuned YOLOv8m on IDD-117K so it detects auto-rickshaws, two-wheelers and cattle that COCO-trained models miss.
+
+## Outcome
+
+- YOLO mAP improvement over baseline on a custom Indian-road benchmark. TODO: add the actual numbers.
+- RAGAS evaluation with a custom citation-accuracy metric.
+- Built by a two-person team in three weeks for an Unstop hackathon.

@@ -1,0 +1,42 @@
+## The problem
+
+Skin-lesion classifiers score well on the dataset they were trained on, then fail on photos from other sources. On 792 outside clinical photos, only 57.9% of melanomas were sent on to a clinician.
+
+## What I built
+
+An eight-stage pipeline behind a fixed JSON output format and a FastAPI endpoint, with a p50 latency of 0.52s on CPU:
+
+- Image-quality gating and routing
+- Lesion detection and segmentation
+- A 6-class classifier plus a referral head
+- Grad-CAM explainability and uncertainty estimation
+- Change-over-time tracking between visits
+
+A RAG layer on top explains the results in plain language.
+
+## The hard part: finding out why it failed
+
+I ran four experiments, each with its pass or fail rule set in advance. None met the 0.80 AUC bar.
+
+| Experiment | AUC |
+| --- | --- |
+| Linear probe | 0.73 |
+| Backbone fine-tune on cloud GPUs | 0.63–0.67 |
+| Ruling out routing and detection as causes | — |
+| Multi-domain training head | 0.63–0.64 |
+
+Together they showed the problem was the data, not the model.
+
+Along the way I caught two problems that would have inflated the results:
+
+- A patient leak in a public dataset. 25 of 132 test images shared a patient with training.
+- A hidden bug where turning off one stage quietly dropped 45% of inputs and made the score look better than it was.
+
+## Outcome
+
+I shipped a narrower product that tracks change over time and never gives a diagnosis. I also designed a consent-gated data-collection system to close the gap:
+
+- Hand-writable checksummed IDs that catch every single-character typo and swapped pair. My first version missed 5% of typos, and the test suite caught it.
+- A revocation path, and exports that keep each patient's images together.
+
+The project has 360 automated tests.

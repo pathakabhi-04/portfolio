@@ -1,0 +1,28 @@
+## The project
+
+MeshDrive is a cloud drive with no central storage. When you upload a file, the desktop app splits it into chunks, names each chunk by its hash, and spreads the chunks across other users' machines. To download, it collects the chunks from whichever peers are online and puts the file back together.
+
+It is a team project and the work was shared. We built most of it together, so it is hard to draw a clean line around one person's code. My part was mostly the backend: chunking, the API, peer-to-peer networking, and the overall design.
+
+## Architecture
+
+- **Desktop client.** A Tauri app with a Rust core and a React interface.
+- **Coordination server.** A REST API for sign-in, file records, chunk records, and which peers are online. It only stores metadata. File contents never go to the server.
+- **Peer network.** libp2p over TCP, encrypted with Noise and multiplexed with Yamux. Peers find each other on the local network with mDNS. A relay server lets peers behind NAT reach each other.
+
+## Chunking
+
+- Every file is split into a fixed number of chunks, and each chunk is hashed with BLAKE3.
+- Chunks are stored under their hash. Two identical chunks are stored once, and a peer can check that a chunk is the one it asked for.
+- The app keeps an index from hash to file on disk, so checking whether a chunk is already stored is a single lookup and doesn't need a disk scan.
+
+## Distribution
+
+- After an upload, half of the chunks stay on the uploader's machine and the other half are pushed to online peers.
+- The app connects to all peers at once, then sends chunks in parallel. A limit on stores per peer keeps any single connection from being flooded.
+- Each chunk goes to a peer chosen round-robin. If that peer fails, the next one is tried. Every successful store is reported to the server in one batch.
+- Deleting a file sends a delete message to every connected peer.
+
+## Download
+
+For each chunk, the app looks for a local copy first and asks a peer only if it doesn't have one. Chunks fetched from peers are saved locally. After the file is rebuilt, the app redistributes its chunks so the network stays balanced.

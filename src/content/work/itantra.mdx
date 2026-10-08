@@ -1,0 +1,55 @@
+## The project
+
+iTantra is our team's answer to ISRO's Smart India Hackathon problem statement SIH26173. It relays speech between phones with no internet and no cell towers. Voice is too heavy for a low-bitrate radio link, so the app turns speech into roughly 100 bytes of text, sends that over Wi-Fi Direct, Bluetooth or LoRa, and speaks it again on the receiving phone. Everything runs on the phone, offline.
+
+It is a five-person team project and still in development. We ranked 7th in the Bennett University internal round. I built five features on the Android side, described below.
+
+## Translation
+
+A rescuer speaking Hindi needs to be understood by someone who only reads Telugu. I integrated IndicTrans2-Distilled, quantized to int8 and run through ONNX Runtime, so every message can be translated on the device between English, Hindi, Telugu and Bengali.
+
+- I ported the IndicTrans2 preprocessing to Kotlin: normalization, script conversion, placeholders for numbers and names, and punctuation handling.
+- English is the pivot. Indian-language pairs chain through English, because the exported models only go to and from English.
+- A failed translation falls back to the original text, so a message is never dropped.
+
+**The hard part was memory.** The first on-device measurement showed the translator holding about 999 MB of native memory for a single 205 MB model. I measured each of ONNX Runtime's memory options instead of guessing. The whole cost was the CPU arena allocator.
+
+| Configuration | Native memory | Cold start | Warm |
+| --- | --- | --- | --- |
+| Default | 999 MB | 2775 ms | 323 ms |
+| Arena allocator off | 322 MB | 2826 ms | 932 ms |
+
+Turning it off cut memory by about three times. Warm translation got slower, but the app evicts the translator between messages anyway, so every real translation is a cold start, where the two are within noise. On phones with enough RAM the translator now keeps its own memory slot, which removed about 1.9 seconds of reload time from every incoming message.
+
+I also tracked down several integration failures: two ONNX Runtime builds clashing over the same symbols, model files that were unreadable after being pushed to the device, and every translation arriving with its own language tags stuck to the front.
+
+## Voice clips
+
+Speech recognition keeps what was said and throws away everything else, such as a siren, a child crying or panic in someone's voice. Voice clips send that missing half next to the text when the Wi-Fi link can carry it.
+
+- Clips are encoded with the phone's built-in codecs, Opus at 16 kbps on Android 10 and later and AMR-WB below that, so nothing was added to the app size.
+- That is about 16 times smaller than the raw audio.
+- I designed a compact binary format that serves both the network and storage, so a received clip is saved exactly as it arrived.
+- Encoding runs alongside speech recognition, not after it, so it never adds to message latency.
+
+## Photo sharing
+
+- Images are re-encoded as WebP with the platform encoder. The default size is 1024 pixels on the long edge, about 40 KB, which crosses the link in around a third of a second. A higher-detail tier exists for a medic photographing a wound.
+- Full-resolution photos are never decoded into memory, which avoids crashes on mid-range phones.
+- Re-encoding strips all metadata, including GPS location.
+- Each image is split into chunks linked by a SHA-256 hash chain. Any relay that changes a single chunk breaks the chain, so the receiver knows the photo is exactly what the sender took.
+
+## Roles
+
+In a disaster there is no directory. A voice saying "we need a stretcher at the south wall" matters depending on who said it. Each person picks a role once: civilian, medic, rescue or coordinator. It is shown on the roster and on every message.
+
+Roles are claimed, not verified, because verifying them needs a server and this app exists for when there isn't one. So every role is visible wherever its owner appears, and only coordinators can send channel-wide announcements, which are attributed by name.
+
+## Blood requests
+
+A separate emergency button broadcasts a request for a blood group.
+
+- Compatible donors nearby get a full-screen alert.
+- People whose group the app doesn't know still see the request, just less prominently.
+- Everyone who answers is saved, so the requester can reach them minutes or hours later.
+- Requests ride on the device-discovery scan the app already runs, so the feature uses no extra radio time.
