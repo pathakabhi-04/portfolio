@@ -62,6 +62,7 @@ export default function ContactPage() {
         <Reveal delay={0.12}>
           <a
             href={profile.resumeUrl}
+            download="Abhinav_Pathak_CV.pdf"
             className="mt-12 inline-block rounded-full border border-border px-6 py-2.5 text-sm font-medium text-fg-muted transition-colors hover:border-accent hover:text-fg"
           >
             Download résumé

@@ -45,6 +45,15 @@ export default function Home() {
                 Get in touch
               </Link>
             )}
+            {profile.resumeUrl && (
+              <a
+                href={profile.resumeUrl}
+                download="Abhinav_Pathak_CV.pdf"
+                className="rounded-full border border-border px-6 py-2.5 text-sm font-medium text-fg-muted transition-colors hover:border-accent hover:text-fg"
+              >
+                Download résumé
+              </a>
+            )}
           </div>
         </Reveal>
       </section>

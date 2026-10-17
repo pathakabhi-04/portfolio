@@ -39,7 +39,7 @@ export const profile: Profile = {
   location: "Greater Noida, India",
   email: "pathakabhinav0405@gmail.com",
   avatar: "/images/avatar.jpg",
-  resumeUrl: "", // set to "/resume.pdf" once the file is in public/
+  resumeUrl: "/resume.pdf",
   about: [
     "I'm a B.Tech Computer Science student who builds end-to-end AI systems, from dataset splits and model training to a served API. My work sits where computer vision meets language: detection, segmentation and tracking on one side, retrieval-augmented generation on the other, and pipelines that connect the two.",
     "My main project, DermaSense, is an eight-stage skin-lesion analysis pipeline with a RAG layer that explains results in plain language. On the language side I design retrieval systems from scratch, combining BM25 and dense search with rank fusion, cross-encoder reranking, a confidence gate that refuses to answer when evidence is weak, and citations assembled in code rather than by the model. I'm currently building TemporalRAG, which makes CCTV and dashcam footage searchable in natural language.",
